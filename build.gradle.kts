@@ -19,4 +19,9 @@ dependencies{
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("mysql:mysql-connector-java:8.0.18")
     compile("org.mybatis:mybatis:3.5.3")
+    compile("org.apache.httpcomponents:httpclient:4.5.10")
+    compile("org.freemarker:freemarker:2.3.29")
+    compile("org.slf4j:slf4j-api:2.0.0-alpha1")
+    compile("org.slf4j:slf4j-log4j12:2.0.0-alpha1")
+    compile("org.apache.commons:commons-collections4:4.1")
 }
