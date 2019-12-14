@@ -5,14 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class Application {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         SpringApplication.run(Application.class, args);
-        try {
             //配置mysql-jdbc
             Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-        } catch (Exception e) {
-            // 错误处理
-        }
     }
 }
 
