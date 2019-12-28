@@ -21,7 +21,5 @@ dependencies{
     compile("org.mybatis:mybatis:3.5.3")
     compile("org.apache.httpcomponents:httpclient:4.5.10")
     compile("org.freemarker:freemarker:2.3.29")
-    compile("org.slf4j:slf4j-api:1.7.25")
-    compile("org.slf4j:slf4j-log4j12:1.7.25")
     compile("org.apache.commons:commons-collections4:4.1")
 }

@@ -1,46 +1,67 @@
 package hello.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hello.dao.User;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
 public class QQLoginController {
+    @Autowired
+    SqlSessionFactory sqlSessionFactory;
+
     @RequestMapping("/qqlogin/callback")
-    public String loginCallBack(@RequestParam String code) throws Exception {
+    public String loginCallBack(@RequestParam String code, HttpServletResponse httpServletResponse) throws Exception {
         String openid = "";
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String url = MessageFormat.format("https://graph.qq.com/oauth2.0/token?grant_type=authorization_code&client_id=101833914&client_secret=ca7ba4c1cdac886216ce44a07aa50b56&code={0}&redirect_uri=https://jiladahe1997.cn/",code);
         HttpGet httpGet = new HttpGet(url);
         CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
-        try {
+
             System.out.println(httpResponse.getStatusLine());
             HttpEntity httpEntity = httpResponse.getEntity();
             String res = EntityUtils.toString(httpEntity);
             Map parsedRes = parseCallBackString(res);
+            String token = (String) parsedRes.get("access_token");
             // 再发一次请求换取openId
-            openid = getOpenid((String) parsedRes.get("access_token"));
+        try {
+            openid = getOpenid(token);
             // 去数据库核对是否有此openid，没有的话则加上
-
-
-            System.out.println(openid);
-        } finally {
+            SqlSession session = this.sqlSessionFactory.openSession();
+            User user = session.selectOne("org.mybatis.example.sentenceMapper.selectUserByOpenid", openid);
+            if(null == user) {
+                session.insert("org.mybatis.example.sentenceMapper.regisUserByOpenid",openid);
+            }
+        } catch (Exception e) {
+            throw e;
+        }
+        finally {
             httpClient.close();
         }
-//        return  "redirect:files/{path}";
-        return openid;
+        // 重定向到callback路径，并种cookie
+        Cookie cookie = new Cookie("_j_token",token);
+        cookie.setPath("/");
+        cookie.setMaxAge(24 * 60 * 60);
+        httpServletResponse.addCookie(cookie);
+        return "redirect:/";
     }
 
     private String getOpenid(String token) throws Exception{
@@ -49,10 +70,16 @@ public class QQLoginController {
         HttpGet httpGet1 = new HttpGet(openIdUrl);
         CloseableHttpResponse httpRespose1 = httpClient.execute(httpGet1);
         HttpEntity httpEntity1 = httpRespose1.getEntity();
-        ObjectMapper mapper = new ObjectMapper();
         String parsedRes2 = EntityUtils.toString(httpEntity1);
-        JsonNode res1 = mapper.readTree(parsedRes2.substring(9,parsedRes2.length()-2));
-        return res1.get("openid").asText();
+        try {
+            // 解析openid
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode res = mapper.readTree(parsedRes2.substring(9,parsedRes2.length()-2));
+            return res.get("openid").asText();
+        } catch (JsonProcessingException e) {
+            // 解析返回的openid失败，直接返回qq返回的res
+            throw new Exception(parsedRes2);
+        }
     }
 
     private Map parseCallBackString(String res) {

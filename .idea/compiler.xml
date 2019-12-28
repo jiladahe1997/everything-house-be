@@ -2,8 +2,10 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
-      <module name="sprint_test.main" target="1.10" />
-      <module name="sprint_test.test" target="1.10" />
+      <module name="everything-house-be.main" target="12" />
+      <module name="everything-house-be.test" target="12" />
+      <module name="sprint_test.main" target="11" />
+      <module name="sprint_test.test" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

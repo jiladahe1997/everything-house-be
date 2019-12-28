@@ -6,4 +6,10 @@
     <select id="selectSentence" resultType="hello.model.SentenceVo">
     select * from sentence
   </select>
+    <select id="selectUserByOpenid" resultType="hello.dao.User">
+        select * from user where openid=#{openid}
+    </select>
+    <insert id="regisUserByOpenid">
+        INSERT INTO user (openid) VALUES (#{openid})
+    </insert>
 </mapper>
