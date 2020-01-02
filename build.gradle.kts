@@ -23,3 +23,9 @@ dependencies{
     compile("org.freemarker:freemarker:2.3.29")
     compile("org.apache.commons:commons-collections4:4.1")
 }
+
+tasks {
+    bootJar {
+        mainClassName = "hello.Application"
+    }
+}

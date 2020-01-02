@@ -50,6 +50,7 @@ public class QQLoginController {
             if(null == user) {
                 session.insert("org.mybatis.example.sentenceMapper.regisUserByOpenid",openid);
             }
+            session.commit();
         } catch (Exception e) {
             throw e;
         }
