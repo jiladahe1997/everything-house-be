@@ -14,18 +14,32 @@ plugins{
     id("org.springframework.boot") version "2.2.0.RELEASE"
     id("io.spring.dependency-management") version "1.0.8.RELEASE"
 }
-
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 dependencies{
-    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-web") {
+        exclude(group = "org.springframework.boot", module = "spring-boot-starter-tomcat")
+    }
     compile("mysql:mysql-connector-java:8.0.18")
     compile("org.mybatis:mybatis:3.5.3")
     compile("org.apache.httpcomponents:httpclient:4.5.10")
     compile("org.freemarker:freemarker:2.3.29")
     compile("org.apache.commons:commons-collections4:4.1")
+    compile("com.aliyun.fc.runtime:fc-java-core:1.3.0")
+    compile("com.aliyun.fc.runtime:fc-java-common:2.2.0")
 }
 
 tasks {
     bootJar {
         mainClassName = "hello.Application"
+        classifier = "boot"
     }
+    jar {
+        enabled = true
+        from({
+            configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
+        })
+        into("$buildDir/libs")    }
 }
