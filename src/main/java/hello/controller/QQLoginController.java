@@ -13,9 +13,9 @@ import org.apache.http.util.EntityUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -23,13 +23,13 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestController
+@Controller
 public class QQLoginController {
     @Autowired
     SqlSessionFactory sqlSessionFactory;
 
     @RequestMapping("/qqlogin/callback")
-    public String loginCallBack(@RequestParam String code, HttpServletResponse httpServletResponse) throws Exception {
+    public void loginCallBack(@RequestParam String code, HttpServletResponse httpServletResponse) throws Exception {
         String openid = "";
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String url = MessageFormat.format("https://graph.qq.com/oauth2.0/token?grant_type=authorization_code&client_id=101833914&client_secret=ca7ba4c1cdac886216ce44a07aa50b56&code={0}&redirect_uri=https://jiladahe1997.cn/",code);
@@ -62,7 +62,7 @@ public class QQLoginController {
         cookie.setPath("/");
         cookie.setMaxAge(24 * 60 * 60);
         httpServletResponse.addCookie(cookie);
-        return "redirect:/";
+        httpServletResponse.sendRedirect("/");
     }
 
     private String getOpenid(String token) throws Exception{
