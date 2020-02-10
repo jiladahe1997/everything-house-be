@@ -16,5 +16,6 @@
     </environments>
     <mappers>
         <mapper resource="SqlMapper.xml"/>
+        <mapper resource="mapper/videoDao.xml"/>
     </mappers>
 </configuration>

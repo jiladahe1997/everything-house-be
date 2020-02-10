@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hello.dao.videoDao">
+    <resultMap id="BaseResultMap" type="hello.model.Video">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="introduce" jdbcType="VARCHAR" property="introduce" />
+        <result column="videoUrl" jdbcType="VARCHAR" property="videoUrl" />
+        <result column="imgUrl" jdbcType="VARCHAR" property="imgUrl" />
+        <result column="videoCatagory" jdbcType="VARCHAR" property="videoCatagory" />
+        <result column="authorId" jdbcType="INTEGER" property="authorId" />
+    </resultMap>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        *
+        from video
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <insert id="insert" keyProperty="id" parameterType="hello.model.Video" useGeneratedKeys="true">
+        insert  into video
+        value (#{name,jdbcType=VARCHAR}, #{introduce,jdbcType=VARCHAR}, #{videoUrl,jdbcType=VARCHAR},
+        #{imgUrl,jdbcType=VARCHAR}, #{videoCatagory,jdbcType=VARCHAR}, #{authorId,jdbcType=INTEGER})
+    </insert>
+</mapper>

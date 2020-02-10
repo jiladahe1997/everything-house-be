@@ -16,7 +16,7 @@ public class loginInterceptor implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(checkLogin).addPathPatterns("/**").excludePathPatterns("/qqlogin/**").excludePathPatterns("/error");
+//        registry.addInterceptor(checkLogin).addPathPatterns("/**").excludePathPatterns("/qqlogin/**").excludePathPatterns("/error");
     }
 }
 
