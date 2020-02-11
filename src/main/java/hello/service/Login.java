@@ -3,6 +3,8 @@ package hello.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.collections4.Predicate;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -13,8 +15,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class Login {
@@ -37,4 +43,16 @@ public class Login {
             throw e;
         }
     }
+
+    public Cookie gettokenCookie(HttpServletRequest request){
+        List<Cookie> cookies = Arrays.asList(request.getCookies());
+        Cookie tokenCookie = IterableUtils.find(cookies, new Predicate<Cookie>() {
+            @Override
+            public boolean evaluate(Cookie object) {
+                return object.getName().equals("_j_token");
+            }
+        });
+        return tokenCookie;
+    }
+
 }

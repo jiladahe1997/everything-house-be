@@ -41,13 +41,7 @@ class CheckLogin implements HandlerInterceptor {
             res.sendRedirect("https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101833914&redirect_uri=https://jiladahe1997.cn/qqlogin/callback");
             return false;
         }
-        List<Cookie> cookies = Arrays.asList(req.getCookies());
-        Cookie tokenCookie = IterableUtils.find(cookies, new Predicate<Cookie>() {
-            @Override
-            public boolean evaluate(Cookie object) {
-                return object.getName().equals("_j_token");
-            }
-        });
+        Cookie tokenCookie=login.gettokenCookie(req);
         if( null == tokenCookie) {
             res.sendRedirect("https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101833914&redirect_uri=https://jiladahe1997.cn/qqlogin/callback");
             return false;

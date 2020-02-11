@@ -1,5 +1,8 @@
 package hello.model;
 
+
+import java.util.Date;
+
 public class Video {
     private int id;//视频唯一id
     private String name;//视频名称
@@ -8,6 +11,7 @@ public class Video {
     private String imgUrl;//封面图链接
     private int videoCatagory;//视频类别：0（彩虹六号）、1（战地5）、2（CSGO）、3（云顶之弈）、4（生活日常)
     private int authorId;//作者id
+    private String uploadDate;//上传日期
 
     public void setId(int id) {
         this.id = id;
@@ -37,6 +41,10 @@ public class Video {
         this.authorId = authorId;
     }
 
+    public void setUploadDate(String uploadDate) {
+        this.uploadDate = uploadDate;
+    }
+
     public int getId() {
         return id;
     }
@@ -63,5 +71,9 @@ public class Video {
 
     public int getAuthorId() {
         return authorId;
+    }
+
+    public String getUploadDate() {
+        return uploadDate;
     }
 }
