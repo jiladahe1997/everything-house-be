@@ -17,5 +17,6 @@
     <mappers>
         <mapper resource="SqlMapper.xml"/>
         <mapper resource="mapper/videoDao.xml"/>
+        <mapper resource="mapper/userDao.xml"/>
     </mappers>
 </configuration>

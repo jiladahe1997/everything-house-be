@@ -21,9 +21,9 @@
     </select>
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
         insert  into video(name, introduce, videoUrl,
-        imgUrl, videoCatagory, authorId)
+        imgUrl, videoCatagory, authorId,uploadDate)
         value (#{name}, #{introduce}, #{videoUrl},
-        #{imgUrl}, #{videoCatagory}, #{authorId})
+        #{imgUrl}, #{videoCatagory}, #{authorId}, #{uploadDate})
     </insert>
     <select id="selectByPage" resultMap="BaseResultMap">
         select *

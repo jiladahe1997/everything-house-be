@@ -1,22 +1,20 @@
 package hello.controller;
 
+import hello.dao.userDao;
 import hello.dao.videoDao;
 import hello.model.Common.Status;
 import hello.model.Video;
 import hello.service.Login;
-import org.apache.commons.collections4.IterableUtils;
-import org.apache.commons.collections4.Predicate;
+import hello.service.myDate;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
 
 @RestController
 public class videoController {
@@ -25,6 +23,8 @@ public class videoController {
     SqlSessionFactory sqlSessionFactory;
     @Autowired
     Login login;
+    @Autowired
+    myDate date;
 
     @GetMapping("/api/videos")
     public ArrayList<Video>getVideos(@RequestParam(name = "page",required = true)int page,
@@ -64,17 +64,20 @@ public class videoController {
         SqlSession session=sqlSessionFactory.openSession();
         videoDao videoDao=session.getMapper(hello.dao.videoDao.class);
         try {
+            String openID=login.getOpenid(tokenCookie.getValue());
+            userDao userDao=session.getMapper(hello.dao.userDao.class);
+            int authorId=userDao.selectByOpenId(openID).getUid();
+            video.setAuthorId(authorId);
+            video.setUploadDate(date.getDate());
             videoDao.insert(video);
             session.commit();
             status.setCode(1);
             status.setMsg("success");
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             status.setCode(0);
             status.setMsg(e.getMessage());
-            throw e;
-        }
-        finally {
+            e.printStackTrace();
+        } finally {
             session.close();
         }
         return status;
