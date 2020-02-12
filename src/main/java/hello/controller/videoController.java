@@ -1,5 +1,6 @@
 package hello.controller;
 
+import hello.DTO.Result;
 import hello.dao.userDao;
 import hello.dao.videoDao;
 import hello.model.Common.Status;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -27,61 +29,60 @@ public class videoController {
     myDate date;
 
     @GetMapping("/api/videos")
-    public ArrayList<Video>getVideos(@RequestParam(name = "page",required = true)int page,
+    public Result getVideos(@RequestParam(name = "page",required = true)int page,
                                      @RequestParam(name = "pageSize",required = true)int pageSize){
-        SqlSession session=sqlSessionFactory.openSession();
-        videoDao videoDao=session.getMapper(hello.dao.videoDao.class);
-        if(page>0&&pageSize>0) {
-            ArrayList<Video> list = videoDao.selectByPage(page, pageSize);
-            session.close();
-            return list;
-        }
-        else {
-            ArrayList<Video> list = videoDao.selectByPage(1, 1);
-            session.close();
-            return list;
+        // 参考https://blog.csdn.net/llkoio/article/details/78939148
+        try(SqlSession session=sqlSessionFactory.openSession()) {
+            videoDao videoDao=session.getMapper(hello.dao.videoDao.class);
+            if(page > 0 && pageSize > 0) {
+                ArrayList<Video> list = videoDao.selectByPage(page, pageSize);
+                session.close();
+                Result result = new Result();
+                return result.success(list);
+            }
+            else {
+                ArrayList<Video> list = videoDao.selectByPage(1, 1);
+                session.close();
+                Result result = new Result();
+                return result.success(list);
+            }
         }
     }
 
     @GetMapping("/api/videoPlay")
-    public Video getVideo(@RequestParam(name = "id",required = true)int id){
-        SqlSession session=sqlSessionFactory.openSession();
-        videoDao videoDao=session.getMapper(hello.dao.videoDao.class);
-        Video video=videoDao.selectByPrimaryKey(id);
-        session.close();
-        return video;
+    public Result getVideo(@RequestParam(name = "id",required = true)int id){
+        try(SqlSession session=sqlSessionFactory.openSession()) {
+            videoDao videoDao=session.getMapper(hello.dao.videoDao.class);
+            Video video=videoDao.selectByPrimaryKey(id);
+            session.close();
+            Result result = new Result();
+            return result.success(video);
+        }
     }
 
     @PostMapping("/api/videoUpload")
-    public Status uploadVideo(@RequestBody Video video, HttpServletRequest request){
-        Status status=new Status();
+    public Result uploadVideo(@RequestBody Video video, HttpServletRequest request) throws IOException{
+        Result result = new Result();
         Cookie tokenCookie=login.gettokenCookie(request);
-        if(tokenCookie==null){
-            status.setCode(0);
-            status.setMsg(" Authentication failed please log in !");
-            return status;
+        if(tokenCookie == null){
+            return result.fail("请先登录");
         }
-        SqlSession session=sqlSessionFactory.openSession();
-        videoDao videoDao=session.getMapper(hello.dao.videoDao.class);
-        try {
-            String openID=login.getOpenid(tokenCookie.getValue());
+        try(SqlSession session=sqlSessionFactory.openSession()){
+            videoDao videoDao=session.getMapper(hello.dao.videoDao.class);
+            String openID;
+            try {
+                openID=login.getOpenid(tokenCookie.getValue());
+            } catch (IOException e) {
+                System.out.println("换取openId时出错");
+                throw  e;
+            }
             userDao userDao=session.getMapper(hello.dao.userDao.class);
             int authorId=userDao.selectByOpenId(openID).getUid();
             video.setAuthorId(authorId);
             video.setUploadDate(date.getDate());
             videoDao.insert(video);
             session.commit();
-            status.setCode(1);
-            status.setMsg("success");
-        } catch (Exception e) {
-            status.setCode(0);
-            status.setMsg(e.getMessage());
-            e.printStackTrace();
-        } finally {
-            session.close();
+            return result.success();
         }
-        return status;
     }
-
-
 }

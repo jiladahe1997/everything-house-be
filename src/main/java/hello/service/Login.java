@@ -44,15 +44,15 @@ public class Login {
         }
     }
 
-    public Cookie gettokenCookie(HttpServletRequest request){
-        List<Cookie> cookies = Arrays.asList(request.getCookies());
-        Cookie tokenCookie = IterableUtils.find(cookies, new Predicate<Cookie>() {
-            @Override
-            public boolean evaluate(Cookie object) {
-                return object.getName().equals("_j_token");
-            }
-        });
-        return tokenCookie;
-    }
+public Cookie gettokenCookie(HttpServletRequest request){
+    List<Cookie> cookies = Arrays.asList(request.getCookies());
+    Cookie tokenCookie = IterableUtils.find(cookies, new Predicate<Cookie>() {
+        @Override
+        public boolean evaluate(Cookie object) {
+            return object.getName().equals("_j_token");
+        }
+    });
+    return tokenCookie;
+}
 
 }

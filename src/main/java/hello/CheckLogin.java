@@ -4,6 +4,8 @@ import hello.model.User;
 import hello.service.Login;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
@@ -27,6 +29,8 @@ class CheckLogin implements HandlerInterceptor {
         this.sqlSessionFactory = sqlSessionFactory;
     }
 
+    Logger logger = LoggerFactory.getLogger(CheckLogin.class);
+
     @Override
     public boolean preHandle(HttpServletRequest req, HttpServletResponse res,Object handler) throws IOException {
         // 根据token去qq开发平台拿openid
@@ -39,6 +43,7 @@ class CheckLogin implements HandlerInterceptor {
         }
         Cookie tokenCookie=login.gettokenCookie(req);
         if( null == tokenCookie) {
+            logger.info("没有cookie，跳转登录页");
             res.sendRedirect("https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101833914&redirect_uri=https://jiladahe1997.cn/qqlogin/callback");
             return false;
         }
