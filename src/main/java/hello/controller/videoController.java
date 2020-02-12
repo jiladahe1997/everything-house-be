@@ -63,7 +63,7 @@ public class videoController {
     @PostMapping("/api/videoUpload")
     public Result uploadVideo(@RequestBody Video video, HttpServletRequest request) throws IOException{
         Result result = new Result();
-        Cookie tokenCookie=login.gettokenCookie(request);
+        Cookie tokenCookie=login.getTokenFromCookie(request);
         if(tokenCookie == null){
             return result.fail("请先登录");
         }

@@ -44,7 +44,7 @@ public class Login {
         }
     }
 
-public Cookie gettokenCookie(HttpServletRequest request){
+public Cookie getTokenFromCookie(HttpServletRequest request){
     List<Cookie> cookies = Arrays.asList(request.getCookies());
     Cookie tokenCookie = IterableUtils.find(cookies, new Predicate<Cookie>() {
         @Override

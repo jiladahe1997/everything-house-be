@@ -41,7 +41,7 @@ class CheckLogin implements HandlerInterceptor {
             res.sendRedirect("https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101833914&redirect_uri=https://jiladahe1997.cn/qqlogin/callback");
             return false;
         }
-        Cookie tokenCookie=login.gettokenCookie(req);
+        Cookie tokenCookie=login.getTokenFromCookie(req);
         if( null == tokenCookie) {
             logger.info("没有cookie，跳转登录页");
             res.sendRedirect("https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101833914&redirect_uri=https://jiladahe1997.cn/qqlogin/callback");
