@@ -28,7 +28,7 @@
     <select id="selectByPage" resultMap="BaseResultMap">
         select *
         from video
-        where id > (#{page}-1)*#{pageSize}
-        order by uploadDate
+        where id >= (select id from video limit #{page},1)
+        limit #{pageSize}
     </select>
 </mapper>

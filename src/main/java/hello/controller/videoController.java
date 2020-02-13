@@ -3,7 +3,6 @@ package hello.controller;
 import hello.DTO.Result;
 import hello.dao.userDao;
 import hello.dao.videoDao;
-import hello.model.Common.Status;
 import hello.model.Video;
 import hello.service.Login;
 import hello.service.myDate;
@@ -30,7 +29,7 @@ public class videoController {
 
     @GetMapping("/api/videos")
     public Result getVideos(@RequestParam(name = "page",required = true)int page,
-                                     @RequestParam(name = "pageSize",required = true)int pageSize){
+                            @RequestParam(name = "pageSize",required = true)int pageSize){
         // 参考https://blog.csdn.net/llkoio/article/details/78939148
         try(SqlSession session=sqlSessionFactory.openSession()) {
             videoDao videoDao=session.getMapper(hello.dao.videoDao.class);
