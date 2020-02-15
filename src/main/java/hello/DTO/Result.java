@@ -1,12 +1,18 @@
 package hello.DTO;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import hello.model.Common.Status;
 import lombok.Data;
 
 @Data
 public class Result {
+    @JsonView(resultView.class)
     Status status;
+    @JsonView(resultView.class)
     Object data;
+
+    public interface resultView{};
+
 
     public Result success(Object data) {
         Status status = new Status();

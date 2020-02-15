@@ -12,6 +12,8 @@ public interface videoDao {
 
     Video selectByPrimaryKey(Integer videoId);
 
-    ArrayList<Video> selectByPage(@Param("page") Integer page, @Param("pageSize") Integer pageSize);
+    ArrayList<Video> selectByPage(@Param("page") Integer page,
+                                  @Param("pageSize") Integer pageSize,
+                                  @Param("catagory") Integer catagory);
 
 }

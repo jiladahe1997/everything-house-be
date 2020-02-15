@@ -28,7 +28,7 @@
     <select id="selectByPage" resultMap="BaseResultMap">
         select *
         from video
-        where id >= (select id from video limit #{page},1)
+        where id >= (select id from video where videoCatagory= #{catagory} limit #{page},1)
         limit #{pageSize}
     </select>
 </mapper>

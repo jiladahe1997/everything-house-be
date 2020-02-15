@@ -1,17 +1,32 @@
 package hello.model;
 
 
+import com.fasterxml.jackson.annotation.JsonView;
+import hello.DTO.Result;
+
 import java.util.Date;
 
 public class Video {
+
+    public interface simpleView extends Result.resultView{};
+    public interface detailView extends simpleView{};
+
+    @JsonView(simpleView.class)
     private int id;//视频唯一id
+    @JsonView(simpleView.class)
     private String name;//视频名称
+    @JsonView(detailView.class)
     private String introduce;//视频简介
+    @JsonView(detailView.class)
     private String videoUrl;//视频链接
+    @JsonView(simpleView.class)
     private String imgUrl;//封面图链接
     private int videoCatagory;//视频类别：0（彩虹六号）、1（战地5）、2（CSGO）、3（云顶之弈）、4（生活日常)
+    @JsonView(detailView.class)
     private int authorId;//作者id
+    @JsonView(detailView.class)
     private String uploadDate;//上传日期
+
 
     public void setId(int id) {
         this.id = id;
@@ -28,6 +43,7 @@ public class Video {
     public void setVideoUrl(String videoUrl) {
         this.videoUrl = videoUrl;
     }
+
 
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;

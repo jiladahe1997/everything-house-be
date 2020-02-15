@@ -41,7 +41,8 @@ class videoControllerTest {
                 .cookie(cookie)
                 .accept(MediaType.APPLICATION_JSON)
                 .param("page", String.valueOf(0))
-                .param("pageSize",String.valueOf(1)))
+                .param("pageSize",String.valueOf(1))
+                .param("catagory",String.valueOf(1)))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         JsonNode jsonNode= new ObjectMapper().readTree(result);

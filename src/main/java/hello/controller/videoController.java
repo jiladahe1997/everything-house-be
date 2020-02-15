@@ -1,5 +1,6 @@
 package hello.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import hello.DTO.Result;
 import hello.dao.userDao;
 import hello.dao.videoDao;
@@ -28,27 +29,31 @@ public class videoController {
     myDate date;
 
     @GetMapping("/api/videos")
+    @JsonView(Video.simpleView.class)
     public Result getVideos(@RequestParam(name = "page",required = true)int page,
-                            @RequestParam(name = "pageSize",required = true)int pageSize){
+                            @RequestParam(name = "pageSize",required = true)int pageSize,
+                            @RequestParam(name = "catagory",required = true)int catagory){
         // 参考https://blog.csdn.net/llkoio/article/details/78939148
         try(SqlSession session=sqlSessionFactory.openSession()) {
             videoDao videoDao=session.getMapper(hello.dao.videoDao.class);
-            if(page > 0 && pageSize > 0) {
-                ArrayList<Video> list = videoDao.selectByPage(page, pageSize);
+
+            if(page > 0 && pageSize > 0
+                    ||catagory==0||catagory==1||catagory==2||catagory==3||catagory==4||catagory==5) {
+                ArrayList<Video> list = videoDao.selectByPage(page, pageSize,catagory);
                 session.close();
                 Result result = new Result();
                 return result.success(list);
             }
             else {
-                ArrayList<Video> list = videoDao.selectByPage(1, 1);
                 session.close();
                 Result result = new Result();
-                return result.success(list);
+                return result.fail("非法参数");
             }
         }
     }
 
     @GetMapping("/api/videoPlay")
+    @JsonView(Video.detailView.class)
     public Result getVideo(@RequestParam(name = "id",required = true)int id){
         try(SqlSession session=sqlSessionFactory.openSession()) {
             videoDao videoDao=session.getMapper(hello.dao.videoDao.class);

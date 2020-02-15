@@ -1,11 +1,15 @@
 package hello.model.Common;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import hello.DTO.Result;
 import hello.model.Video;
 import lombok.Getter;
 import lombok.Setter;
 
 public class Status {
+   @JsonView(Result.resultView.class)
     private Integer code;
+   @JsonView(Result.resultView.class)
     private String msg;;
 
    public Integer getCode() {
