@@ -14,8 +14,8 @@
         where uid = #{uid}
     </select>
     <insert id="insert" keyProperty="uid" useGeneratedKeys="true">
-        insert  into user(uid, openid)
-        value (#{uid}, #{openid})
+        insert  into user(uid, openid, nickName, figureUrl)
+        value (#{uid}, #{openid},#{nickName},#{figureUrl})
     </insert>
     <select id="selectByOpenId"  resultMap="BaseResultMap">
         select

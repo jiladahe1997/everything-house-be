@@ -37,7 +37,7 @@ class videoControllerTest {
 
     @Test
     void getVideos() throws Exception {
-        String result=mvc.perform(get("/api/videos")
+        String result=mvc.perform(get("/videos")
                 .cookie(cookie)
                 .accept(MediaType.APPLICATION_JSON)
                 .param("page", String.valueOf(0))
@@ -51,16 +51,16 @@ class videoControllerTest {
 
     @Test
     void getVideo() throws Exception {
-       String result=mvc.perform(get("/api/videoPlay")
+       String result=mvc.perform(get("/videoPlay")
                 .cookie(cookie)
                 .accept(MediaType.APPLICATION_JSON)
                 .param("id",String.valueOf(1)))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
        JsonNode jsonNode=new ObjectMapper().readTree(result);
-       if(jsonNode.get("data")==null)
+       if(jsonNode.get("data").isNull())
        {
-           assertEquals(0,jsonNode.get("status").get("code").asInt());
+           assertEquals(-1,jsonNode.get("status").get("code").asInt());
        }
        else{
            assertAll("video",
@@ -75,12 +75,12 @@ class videoControllerTest {
     void uploadVideo() throws Exception {
         Video video=new Video();
         video.setName("name");
-        video.setIntroduce("introduce");
+        video.setIntroduction("introduce");
         video.setVideoUrl("videoUrl");
         video.setImgUrl("imgUrl");
         video.setVideoCatagory(0);
         JsonNode jsonParams=new ObjectMapper().valueToTree(video);
-        String result=mvc.perform(post("/api/videoUpload")
+        String result=mvc.perform(post("/videoUpload")
                 .cookie(cookie)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)

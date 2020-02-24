@@ -16,12 +16,13 @@ public class Video {
     @JsonView(simpleView.class)
     private String name;//视频名称
     @JsonView(detailView.class)
-    private String introduce;//视频简介
+    private String introduction;//视频简介
     @JsonView(detailView.class)
     private String videoUrl;//视频链接
     @JsonView(simpleView.class)
     private String imgUrl;//封面图链接
     private int videoCatagory;//视频类别：0（彩虹六号）、1（战地5）、2（CSGO）、3（云顶之弈）、4（生活日常)
+
     @JsonView(detailView.class)
     private int authorId;//作者id
     @JsonView(detailView.class)
@@ -36,8 +37,8 @@ public class Video {
         this.name = name;
     }
 
-    public void setIntroduce(String introduce) {
-        this.introduce = introduce;
+    public void setIntroduction(String introduction) {
+        this.introduction = introduction;
     }
 
     public void setVideoUrl(String videoUrl) {
@@ -69,8 +70,8 @@ public class Video {
         return name;
     }
 
-    public String getIntroduce() {
-        return introduce;
+    public String getIntroduction() {
+        return introduction;
     }
 
     public String getVideoUrl() {

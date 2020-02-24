@@ -6,7 +6,7 @@
     <resultMap id="BaseResultMap" type="hello.model.Video">
         <id column="id" jdbcType="INTEGER" property="id" />
         <result column="name" jdbcType="VARCHAR" property="name" />
-        <result column="introduce" jdbcType="VARCHAR" property="introduce" />
+        <result column="introduction" jdbcType="VARCHAR" property="introduction" />
         <result column="videoUrl" jdbcType="VARCHAR" property="videoUrl" />
         <result column="imgUrl" jdbcType="VARCHAR" property="imgUrl" />
         <result column="videoCatagory" jdbcType="VARCHAR" property="videoCatagory" />
@@ -20,15 +20,16 @@
         where id = #{id}
     </select>
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert  into video(name, introduce, videoUrl,
+        insert  into video(name, introduction, videoUrl,
         imgUrl, videoCatagory, authorId,uploadDate)
-        value (#{name}, #{introduce}, #{videoUrl},
+        value (#{name}, #{introduction}, #{videoUrl},
         #{imgUrl}, #{videoCatagory}, #{authorId}, #{uploadDate})
     </insert>
     <select id="selectByPage" resultMap="BaseResultMap">
         select *
         from video
         where id >= (select id from video where videoCatagory= #{catagory} limit #{page},1)
+        and videoCatagory= #{catagory}
         limit #{pageSize}
     </select>
 </mapper>

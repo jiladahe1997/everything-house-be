@@ -110,6 +110,10 @@
                     <groupId>org.junit.vintage</groupId>
                     <artifactId>junit-vintage-engine</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.vaadin.external.google</groupId>
+                    <artifactId>android-json</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -127,6 +131,11 @@
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.tencent.cloud</groupId>
+            <artifactId>cos-sts-java</artifactId>
+            <version>3.0.6</version>
         </dependency>
     </dependencies>
 

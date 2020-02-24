@@ -1,9 +1,13 @@
 package hello.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import hello.DTO.Result;
 import hello.dao.userDao;
 import hello.dao.videoDao;
+import hello.model.User;
 import hello.model.Video;
 import hello.service.Login;
 import hello.service.myDate;
@@ -28,7 +32,7 @@ public class videoController {
     @Autowired
     myDate date;
 
-    @GetMapping("/api/videos")
+    @GetMapping("/videos")
     @JsonView(Video.simpleView.class)
     public Result getVideos(@RequestParam(name = "page",required = true)int page,
                             @RequestParam(name = "pageSize",required = true)int pageSize,
@@ -52,19 +56,32 @@ public class videoController {
         }
     }
 
-    @GetMapping("/api/videoPlay")
+    @GetMapping("/videoPlay")
     @JsonView(Video.detailView.class)
     public Result getVideo(@RequestParam(name = "id",required = true)int id){
         try(SqlSession session=sqlSessionFactory.openSession()) {
             videoDao videoDao=session.getMapper(hello.dao.videoDao.class);
+            userDao userDao= session.getMapper(hello.dao.userDao.class);
             Video video=videoDao.selectByPrimaryKey(id);
-            session.close();
-            Result result = new Result();
-            return result.success(video);
+            Result result=new Result();
+            if(video!=null) {
+                User user = userDao.selectByPrimaryKey(video.getAuthorId());
+                session.close();
+                ObjectMapper objectMapper = new ObjectMapper();
+                ObjectNode videoNode = objectMapper.valueToTree(video);
+                videoNode.put("authorName", user.getNickname());
+                videoNode.put("avatar", user.getFigureurl());
+                videoNode.remove("id");
+                videoNode.remove("authorId");
+                videoNode.remove("videoCatagory");
+                result.success(videoNode);
+                return result;
+            }
+            return result.fail("未找到该视频");
         }
     }
 
-    @PostMapping("/api/videoUpload")
+    @PostMapping("/videoUpload")
     public Result uploadVideo(@RequestBody Video video, HttpServletRequest request) throws IOException{
         Result result = new Result();
         Cookie tokenCookie=login.getTokenFromCookie(request);
@@ -81,7 +98,8 @@ public class videoController {
                 throw  e;
             }
             userDao userDao=session.getMapper(hello.dao.userDao.class);
-            int authorId=userDao.selectByOpenId(openID).getUid();
+            User user=userDao.selectByOpenId(openID);
+            int authorId=user.getUid();
             video.setAuthorId(authorId);
             video.setUploadDate(date.getDate());
             videoDao.insert(video);

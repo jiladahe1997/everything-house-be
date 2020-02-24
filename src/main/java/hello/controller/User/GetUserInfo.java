@@ -1,15 +1,20 @@
 package hello.controller.User;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hello.dao.userDao;
 import hello.model.Login.UserInfo;
 import hello.model.Login.UserInfoVo;
+import hello.model.User;
 import hello.service.Login;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -21,10 +26,12 @@ public class GetUserInfo {
     @Autowired
     Login login;
 
+
     @RequestMapping("/getUserInfo")
     UserInfoVo GetUserInfo(@CookieValue("_j_token") String token) throws IOException, URISyntaxException {
         // 通过token获取openid
-        String openid = login.getOpenid(token);
+        String openid;
+        openid = login.getOpenid(token);
         // 获取用户信息
         URIBuilder uriBuilder = new URIBuilder("https://graph.qq.com/user/get_user_info");
         uriBuilder.setParameters(Arrays.asList(

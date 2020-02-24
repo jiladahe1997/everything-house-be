@@ -1,9 +1,9 @@
 package hello.controller.User;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import hello.dao.userDao;
 import hello.model.User;
+import hello.service.Login;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -28,6 +28,9 @@ public class QQLoginController {
     @Autowired
     SqlSessionFactory sqlSessionFactory;
 
+    @Autowired
+    Login login;
+
     @RequestMapping("/qqlogin/callback")
     public void loginCallBack(@RequestParam String code, HttpServletResponse httpServletResponse) throws Exception {
         String openid = "";
@@ -43,18 +46,18 @@ public class QQLoginController {
             String token = (String) parsedRes.get("access_token");
             // 再发一次请求换取openId
         try {
-            openid = getOpenid(token);
+            openid = login.getOpenid(token);
             // 去数据库核对是否有此openid，没有的话则加上
             SqlSession session = this.sqlSessionFactory.openSession();
-            User user = session.selectOne("org.mybatis.example.sentenceMapper.selectUserByOpenid", openid);
+            userDao userDao=session.getMapper(hello.dao.userDao.class);
+            User user=userDao.selectByOpenId(openid);
             if(null == user) {
-                session.insert("org.mybatis.example.sentenceMapper.regisUserByOpenid",openid);
+                user=login.getUserInfo(token);
+                userDao.insert(user);
             }
             session.commit();
-        } catch (Exception e) {
-            throw e;
-        }
-        finally {
+            session.close();
+        } finally {
             httpClient.close();
         }
         // 重定向到callback路径，并种cookie
@@ -65,23 +68,6 @@ public class QQLoginController {
         httpServletResponse.sendRedirect("/");
     }
 
-    private String getOpenid(String token) throws Exception{
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        String openIdUrl = MessageFormat.format("https://graph.qq.com/oauth2.0/me?access_token={0}", token);
-        HttpGet httpGet1 = new HttpGet(openIdUrl);
-        CloseableHttpResponse httpRespose1 = httpClient.execute(httpGet1);
-        HttpEntity httpEntity1 = httpRespose1.getEntity();
-        String parsedRes2 = EntityUtils.toString(httpEntity1);
-        try {
-            // 解析openid
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode res = mapper.readTree(parsedRes2.substring(9,parsedRes2.length()-2));
-            return res.get("openid").asText();
-        } catch (JsonProcessingException e) {
-            // 解析返回的openid失败，直接返回qq返回的res
-            throw new Exception(parsedRes2);
-        }
-    }
 
     private Map parseCallBackString(String res) {
         Map map = new HashMap();
