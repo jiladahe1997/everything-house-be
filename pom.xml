@@ -7,6 +7,30 @@
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
+
+    <profiles>
+        <!--生产环境-->
+        <profile>
+            <id>normal</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <environment>normal</environment>
+            </properties>
+        </profile>
+        <!--生产环境-->
+        <profile>
+            <id>test</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <environment>test</environment>
+            </properties>
+        </profile>
+    </profiles>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -15,6 +39,7 @@
     <properties>
         <project.java.version>1.8</project.java.version>
         <tomcat.version>8.5.20</tomcat.version>
+        <!-- 开发环境 -->
     </properties>
 
     <dependencies>

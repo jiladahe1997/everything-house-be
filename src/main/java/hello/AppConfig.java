@@ -7,10 +7,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+@Profile("normal")
 @Configuration
 public class AppConfig {
     @Bean
