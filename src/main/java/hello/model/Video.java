@@ -21,7 +21,7 @@ public class Video {
     private String videoUrl;//视频链接
     @JsonView(simpleView.class)
     private String imgUrl;//封面图链接
-    private int videoCatagory;//视频类别：0（彩虹六号）、1（战地5）、2（CSGO）、3（云顶之弈）、4（生活日常)
+    private int videoCatagory;//视频类别：0（彩虹六号）、1（战地5）、2（CSGO）、3（云顶之弈）、4（生活日常)、5（鬼畜搞笑）
 
     @JsonView(detailView.class)
     private int authorId;//作者id

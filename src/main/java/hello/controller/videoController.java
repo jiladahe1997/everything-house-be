@@ -10,6 +10,7 @@ import hello.dao.videoDao;
 import hello.model.User;
 import hello.model.Video;
 import hello.service.Login;
+import hello.service.TencentCloudService;
 import hello.service.myDate;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 
 
@@ -31,6 +34,8 @@ public class videoController {
     Login login;
     @Autowired
     myDate date;
+    @Autowired
+    TencentCloudService tencentCloudService;
 
     @GetMapping("/videos")
     @JsonView(Video.simpleView.class)
@@ -88,6 +93,20 @@ public class videoController {
         if(tokenCookie == null){
             return result.fail("请先登录");
         }
+
+
+        URL imgUrl=new URL("https://"+video.getImgUrl());
+        String url=URLDecoder.decode(imgUrl.getPath().split("/")[2],"UTF-8");
+        String imgSrcKey="temp/"+URLDecoder.decode(imgUrl.getPath().split("/")[2],"UTF-8");
+        String imgDesKey="images/"+URLDecoder.decode(imgUrl.getPath().split("/")[2],"UTF-8");
+        tencentCloudService.copyObject(tencentCloudService.bucket,imgSrcKey,tencentCloudService.bucket,imgDesKey,tencentCloudService.region);
+
+        URL videoUrl=new URL("https://"+video.getVideoUrl());
+        String videoSrcKey="temp/"+URLDecoder.decode(videoUrl.getPath().split("/")[2],"UTF-8");
+        String videDesKey="videos/"+URLDecoder.decode(videoUrl.getPath().split("/")[2],"UTF-8");
+        tencentCloudService.copyObject(tencentCloudService.bucket,videoSrcKey,tencentCloudService.bucket,videDesKey,tencentCloudService.region);
+
+
         try(SqlSession session=sqlSessionFactory.openSession()){
             videoDao videoDao=session.getMapper(hello.dao.videoDao.class);
             String openID;
@@ -100,6 +119,8 @@ public class videoController {
             userDao userDao=session.getMapper(hello.dao.userDao.class);
             User user=userDao.selectByOpenId(openID);
             int authorId=user.getUid();
+            video.setVideoUrl("sls-cloudfunction-ap-guangzhou-code-1256609098.cos.ap-guangzhou.myqcloud.com/"+videDesKey);
+            video.setImgUrl("sls-cloudfunction-ap-guangzhou-code-1256609098.cos.ap-guangzhou.myqcloud.com/"+imgDesKey);
             video.setAuthorId(authorId);
             video.setUploadDate(date.getDate());
             videoDao.insert(video);

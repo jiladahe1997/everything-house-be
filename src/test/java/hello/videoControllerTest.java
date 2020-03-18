@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hello.model.Video;
 
+import hello.service.TencentCloudService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 
 import javax.servlet.http.Cookie;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -29,6 +33,8 @@ class videoControllerTest {
 
     @Autowired
     private MockMvc mvc;
+    @Autowired
+    TencentCloudService tencentCloudService;
 
     private static Cookie cookie;
     @BeforeAll
@@ -74,11 +80,24 @@ class videoControllerTest {
 
     @Test
     void uploadVideo() throws Exception {
+        String bucket="sls-cloudfunction-ap-guangzhou-code-1256609098";
+        String region="ap-guangzhou";
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat ("yyyy-MM-dd-hh-mm-ss");
+
+        String imgkey=(simpleDateFormat.format(new Date()));
+        imgkey=tencentCloudService.putObject(bucket,region,"temp/"+imgkey,"src/test/resources/TencentCloudTestFile.txt");
+        imgkey="sls-cloudfunction-ap-guangzhou-code-1256609098.cos.ap-guangzhou.myqcloud.com/"+imgkey;
+
+
+        String videokey=(simpleDateFormat.format(new Date()));
+        videokey=tencentCloudService.putObject(bucket,region,"temp/"+videokey,"src/test/resources/TencentCloudTestFile2.txt");
+        videokey="sls-cloudfunction-ap-guangzhou-code-1256609098.cos.ap-guangzhou.myqcloud.com/"+videokey;
+
         Video video=new Video();
         video.setName("name");
         video.setIntroduction("introduce");
-        video.setVideoUrl("videoUrl");
-        video.setImgUrl("imgUrl");
+        video.setVideoUrl(videokey);
+        video.setImgUrl(imgkey);
         video.setVideoCatagory(0);
         JsonNode jsonParams=new ObjectMapper().valueToTree(video);
         String result=mvc.perform(post("/videoUpload")
