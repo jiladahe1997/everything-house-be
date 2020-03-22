@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hello.dao.videoDao">
+    <resultMap id="BaseResultMap" type="hello.model.Video">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="introduction" jdbcType="VARCHAR" property="introduction" />
+        <result column="videoUrl" jdbcType="VARCHAR" property="videoUrl" />
+        <result column="imgUrl" jdbcType="VARCHAR" property="imgUrl" />
+        <result column="videoCatagory" jdbcType="VARCHAR" property="videoCatagory" />
+        <result column="authorId" jdbcType="INTEGER" property="authorId" />
+        <result column="uploadDate" jdbcType="DATE" property="uploadDate" />
+    </resultMap>
+    <select id="selectByPrimaryKey"  resultMap="BaseResultMap">
+        select
+        *
+        from video
+        where id = #{id}
+    </select>
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert  into video(name, introduction, videoUrl,
+        imgUrl, videoCatagory, authorId,uploadDate)
+        value (#{name}, #{introduction}, #{videoUrl},
+        #{imgUrl}, #{videoCatagory}, #{authorId}, #{uploadDate})
+    </insert>
+    <select id="selectByPage" resultMap="BaseResultMap">
+        select *
+        from video
+        where id >= (select id from video where videoCatagory= #{catagory} limit #{page},1)
+        and videoCatagory= #{catagory}
+        limit #{pageSize}
+    </select>
+</mapper>

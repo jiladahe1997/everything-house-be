@@ -1,11 +1,11 @@
 package hello;
 
-import hello.dao.User;
+import hello.model.User;
 import hello.service.Login;
-import org.apache.commons.collections4.IterableUtils;
-import org.apache.commons.collections4.Predicate;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
@@ -16,8 +16,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 @Component
 class CheckLogin implements HandlerInterceptor {
@@ -31,6 +29,8 @@ class CheckLogin implements HandlerInterceptor {
         this.sqlSessionFactory = sqlSessionFactory;
     }
 
+    Logger logger = LoggerFactory.getLogger(CheckLogin.class);
+
     @Override
     public boolean preHandle(HttpServletRequest req, HttpServletResponse res,Object handler) throws IOException {
         // 根据token去qq开发平台拿openid
@@ -41,14 +41,9 @@ class CheckLogin implements HandlerInterceptor {
             res.sendRedirect("https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101833914&redirect_uri=https://jiladahe1997.cn/qqlogin/callback");
             return false;
         }
-        List<Cookie> cookies = Arrays.asList(req.getCookies());
-        Cookie tokenCookie = IterableUtils.find(cookies, new Predicate<Cookie>() {
-            @Override
-            public boolean evaluate(Cookie object) {
-                return object.getName().equals("_j_token");
-            }
-        });
+        Cookie tokenCookie=login.getTokenFromCookie(req);
         if( null == tokenCookie) {
+            logger.info("没有cookie，跳转登录页");
             res.sendRedirect("https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101833914&redirect_uri=https://jiladahe1997.cn/qqlogin/callback");
             return false;
         }

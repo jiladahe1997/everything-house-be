@@ -5,8 +5,8 @@
 <mapper namespace="org.mybatis.example.sentenceMapper">
     <select id="selectSentence" resultType="hello.model.SentenceVo">
     select * from sentence
-  </select>
-    <select id="selectUserByOpenid" resultType="hello.dao.User">
+    </select>
+    <select id="selectUserByOpenid" resultType="hello.model.User">
         select * from user where openid=#{openid}
     </select>
     <insert id="regisUserByOpenid">
